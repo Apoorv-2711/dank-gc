@@ -4,6 +4,7 @@ import "./globals.css";
 export const metadata = {
   title: "Dank Chat",
   description: "Chat room made-by: Apoorv Jain"
+
 };
 
 export default function RootLayout({ children }) {
