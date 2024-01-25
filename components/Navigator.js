@@ -4,14 +4,18 @@ import { useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import useAuthUser from "@/hooks/useAuthUser";
-import { useSignInWithGoogle } from "react-firebase-hooks/auth";
+// import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { auth } from "@/utils/firebase";
 import Chatbox from "./Chatbox";
+import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 
 const Navigator = () => {
   const [active, setActive] = useState(false);
   const user = useAuthUser();
-  const [signInWithGoogle] = useSignInWithGoogle(auth)
+  // const [signInWithGoogle] = useSignInWithGoogle(auth)
+  const provider = new GoogleAuthProvider();
+
+  const auth = getAuth();
 
   const toggleSidebar = () => {
     setActive((x) => !x);
@@ -20,9 +24,20 @@ const Navigator = () => {
   if (!user)
     return (
       <main className="relative min-h-screen overflow-x-hidden flex w-full justify-center items-center bg-[#1c1c1c]">
-        <button onClick={() => {
-            signInWithGoogle()
-        }} className="bg-white hover:bg-gray-300 text-black font-semibold hover:text-black py-2 px-4 border border-black hover:border-transparent rounded">
+        <button
+          onClick={() => {
+            signInWithPopup(auth, provider)
+              .then((result) => {
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                const credential =
+                  GoogleAuthProvider.credentialFromResult(result);
+                const token = credential.accessToken;
+                const user = result.user;
+              })
+              .catch((error) => {});
+          }}
+          className="bg-white hover:bg-gray-300 text-black font-semibold hover:text-black py-2 px-4 border border-black hover:border-transparent rounded"
+        >
           Sign in with Google
         </button>
       </main>
